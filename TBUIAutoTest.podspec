@@ -18,5 +18,8 @@ s.requires_arc = true
 s.source_files = "TBUIAutoTest/*.{h,m}"
 s.public_header_files = "TBUIAutoTest/TBUIAutoTest.h"
 s.frameworks = 'Foundation', 'UIKit'
+s.dependency 'ZHLogger'
+s.dependency 'ZHCoreZASDK'
+s.dependency 'ZHTabBar'
 
 end

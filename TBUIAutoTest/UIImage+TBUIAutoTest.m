@@ -14,6 +14,7 @@
 
 + (void)load
 {
+    [NSUserDefaults.standardUserDefaults setBool:YES forKey:kAutoTestUITurnOnKey];
     BOOL isAutoTestUI = [NSUserDefaults.standardUserDefaults boolForKey:kAutoTestUITurnOnKey];
     if (isAutoTestUI)
     {
