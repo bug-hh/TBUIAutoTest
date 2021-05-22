@@ -7,6 +7,7 @@
 
 #import "UITextField+AutoUI.h"
 #import "TBUIAutoTest.h"
+#import "iOSHookInfo.h"
 #import <objc/runtime.h>
 
 @import ZHLogger;
@@ -21,12 +22,16 @@
 }
 
 - (BOOL)auto_becomeFirstResponder {
-    [self auto_becomeFirstResponder];
+    if (![TBUIAutoTest isEnableAutoUI]) {
+        ZHLogInfo(@"没有开启 AutoUI 开关，请到 DebugUI 中开启");
+        return [self auto_becomeFirstResponder];
+    }
+    
     ZHLogInfo(@"hook become responder");
-    NSString *className = NSStringFromClass([self class]);
-    NSString *superViewClassName = NSStringFromClass([self.superview class]);
-    ZHLogInfo(@"class name: %@", className);
-    ZHLogInfo(@"super view class name: %@", superViewClassName);
+    NSString *selfName = NSStringFromClass([self class]);
+    NSString *superViewName = NSStringFromClass([self.superview class]);
+    ZHLogInfo(@"class name: %@", selfName);
+    ZHLogInfo(@"super view class name: %@", superViewName);
     
     ZABaseContextModel *model = self.zaContextModel;
     // unknown
@@ -39,6 +44,8 @@
         NSInteger buttonUIEvent = model.zaUIEventType;
         
     }
+    
+    iOSHookInfo *hookInfo = [[iOSHookInfo alloc] init];
     
     if ([self isKindOfClass:UITextField.class]) {
         UITextField *temp = (UITextField*)self;
@@ -58,21 +65,40 @@
         ZHLogInfo(@"id: %@", xcID);
         ZHLogInfo(@"label: %@", xcLabel);
         ZHLogInfo(@"hint: %@", temp.attributedPlaceholder.string);
+        NSString *appCompText = temp.attributedText.string;
+        NSString *appCompHint = temp.attributedPlaceholder.string;
+        hookInfo.xcID = xcID;
+        hookInfo.xcLabel = xcLabel;
+        
+        hookInfo.appCompName = selfName;
+        hookInfo.appSuperViewCompName = superViewName;
+        hookInfo.appUserOperation = @"click";
+        hookInfo.appCompText = appCompText;
+        hookInfo.appCompHint = appCompHint;
+        hookInfo.hookMethodName = @"becomeFirstResponder";
+        ZHLogInfo(@"%@", hookInfo.description);
         
     }
+    return [self auto_becomeFirstResponder];
     
 }
 
 - (BOOL)auto_resignFirstResponder {
-    [self auto_resignFirstResponder];
+    if (![TBUIAutoTest isEnableAutoUI]) {
+        ZHLogInfo(@"没有开启 AutoUI 开关，请到 DebugUI 中开启");
+        return [self auto_resignFirstResponder];;
+    }
     
     ZHLogInfo(@"hook resign responder");
-    NSString *className = NSStringFromClass([self class]);
-    NSString *superViewClassName = NSStringFromClass([self.superview class]);
-    ZHLogInfo(@"class name: %@", className);
-    ZHLogInfo(@"super view class name: %@", superViewClassName);
+    NSString *selfName = NSStringFromClass([self class]);
+    NSString *superViewName = NSStringFromClass([self.superview class]);
+    ZHLogInfo(@"class name: %@", selfName);
+    ZHLogInfo(@"super view class name: %@", superViewName);
     
     ZABaseContextModel *model = self.zaContextModel;
+    
+    iOSHookInfo *hookInfo = [[iOSHookInfo alloc] init];
+    
     // unknown
     if (model.zaUIType == 0) {
 //        这种情况下，model 是个空的，打点是空的
@@ -104,9 +130,21 @@
         ZHLogInfo(@"hint: %@", temp.attributedPlaceholder.string);
         ZHLogInfo(@"input text: %@", temp.attributedText.string);
         
+        NSString *appCompText = temp.attributedText.string;
+        NSString *appCompHint = temp.attributedPlaceholder.string;
+        
+        hookInfo.xcID = xcID;
+        hookInfo.xcLabel = xcLabel;
+        
+        hookInfo.appCompName = selfName;
+        hookInfo.appSuperViewCompName = superViewName;
+        hookInfo.appUserOperation = @"click";
+        hookInfo.appCompText = appCompText;
+        hookInfo.appCompHint = appCompHint;
+        hookInfo.hookMethodName = @"resignFirstResponder";
+        ZHLogInfo(@"%@", hookInfo.description);
     }
-    
-    
+    return [self auto_resignFirstResponder];
 }
 
 @end

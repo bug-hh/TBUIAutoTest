@@ -11,9 +11,12 @@
 extern NSString * const kAutoTestUITurnOnKey; // 是否生成 UI 标签
 extern NSString * const kAutoTestUILongPressKey; // 是否开启长按弹窗显示 UI 标签
 
+#define ZHDebugEnableAutoUIKey @"ZHDebugEnableAutoUIKey"
+
 @interface TBUIAutoTest : NSObject <UIGestureRecognizerDelegate>
 
 + (instancetype)sharedInstance;
++ (BOOL)isEnableAutoUI;
 
 @end
 

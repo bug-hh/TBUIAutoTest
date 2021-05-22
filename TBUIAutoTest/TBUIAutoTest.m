@@ -24,6 +24,10 @@ NSString * const kAutoTestUILongPressKey = @"kAutoTestUILongPressKey";
     return _instance;
 }
 
++ (BOOL)isEnableAutoUI {
+    return [[NSUserDefaults standardUserDefaults] boolForKey:ZHDebugEnableAutoUIKey];
+}
+
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
 {
     return YES;

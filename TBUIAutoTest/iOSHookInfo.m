@@ -9,6 +9,13 @@
 
 @implementation iOSHookInfo
 
+- (NSString *)description
+{
+    NSArray *arr = @[@"xcID", @"xcLabel", @"appCompName", @"appSuperViewCompName", @"appUserOperation", @"appOperationName", @"appCompText", @"appCompHint", @"hookMethodName"];
+    return [[self dictionaryWithValuesForKeys:arr] description];
+    
+}
+
 
 
 @end

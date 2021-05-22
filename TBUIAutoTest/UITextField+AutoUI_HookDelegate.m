@@ -7,6 +7,7 @@
 
 #import <objc/runtime.h>
 #import "UITextField+AutoUI_HookDelegate.h"
+#import "iOSHookInfo.h"
 #import "TBUIAutoTest.h"
 
 @import ZHLogger;
@@ -67,8 +68,26 @@ static void auto_exchangeDelegateMethod(Class originalClass, SEL originalSel, Cl
 
 // 在添加该 delegate 的情况下，使用 swizzling 交换方法实现。
 // 交换后的具体方法实现
+// 这个方法用来 hook 用户点击键盘的 return 按钮
 - (BOOL)replace_textFieldShouldReturn:(UITextField *)textField {
-    ZHLogInfo(@"hook return");
+    if (![TBUIAutoTest isEnableAutoUI]) {
+        ZHLogInfo(@"没有开启 AutoUI 开关，请到 DebugUI 中开启");
+        return [self replace_textFieldShouldReturn:textField];
+    }
+    
+    NSString *superViewName = NSStringFromClass(textField.superview.class);
+    NSString *selfName = @"UITextField";
+    
+    iOSHookInfo *hookInfo = [[iOSHookInfo alloc] init];
+    
+    hookInfo.appCompName = selfName;
+    hookInfo.appSuperViewCompName = superViewName;
+    hookInfo.appUserOperation = @"click";
+    hookInfo.appCompText = @"return";
+    hookInfo.appCompHint = @"return";
+    hookInfo.hookMethodName = @"textFieldShouldReturn";
+    
+    ZHLogInfo(@"%@", hookInfo.description);
     return [self replace_textFieldShouldReturn:textField];
     
 }

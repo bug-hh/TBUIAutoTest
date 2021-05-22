@@ -12,15 +12,17 @@ NS_ASSUME_NONNULL_BEGIN
 @interface iOSHookInfo : NSObject
 
 //XCTest 属性
-@property(nonatomic, strong) NSString *xcID;
-@property(nonatomic, strong) NSString *xcLabel;
+@property(nonatomic, strong, nullable) NSString *xcID;
+@property(nonatomic, strong, nullable) NSString *xcLabel;
 
 //APP 内控件自有属性
-@property(nonatomic, strong) NSString *appCompName;
-@property(nonatomic, strong) NSString *appSuperViewCompName;
-@property(nonatomic, strong) NSString *appUserOperation;
-@property(nonatomic, strong) NSString *appOperationName;
-
+@property(nonatomic, strong, nullable) NSString *appCompName;
+@property(nonatomic, strong, nullable) NSString *appSuperViewCompName;
+@property(nonatomic, strong, nullable) NSString *appUserOperation;
+@property(nonatomic, strong, nullable) NSString *appOperationName;
+@property(nonatomic, strong, nullable) NSString *appCompText;
+@property(nonatomic, strong, nullable) NSString *appCompHint;
+@property(nonatomic, strong, nullable) NSString *hookMethodName;
 
 @end
 

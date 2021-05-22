@@ -7,6 +7,7 @@
 
 #import "UIControl+AutoUI.h"
 #import "TBUIAutoTest.h"
+#import "iOSHookInfo.h"
 #import <objc/runtime.h>
 
 
@@ -54,6 +55,12 @@
 
 - (void)auto_sendAction:(SEL)action to:(id)target forEvent:(UIEvent *)event {
     [self auto_sendAction:action to:target forEvent:event];
+    
+    if (![TBUIAutoTest isEnableAutoUI]) {
+        ZHLogInfo(@"没有开启 AutoUI 开关，请到 DebugUI 中开启");
+        return;
+    }
+    
     ZHLogInfo(@"##### hook #####");
     NSString *selfName = NSStringFromClass([self class]);
     NSString *superViewName = NSStringFromClass([self.superview class]);
@@ -61,33 +68,14 @@
     ZHLogInfo(@"%@", superViewName);
     ZHLogInfo(@"%@", NSStringFromSelector(action));
     
-    if ([selfName containsString:@"TabBarButton"]) {
-        ZHTabBarItemView *itemView = self.superview;
-        ZHTabBarItem *item = itemView.item;
-        ZHLogInfo(@"%@", itemView.accessibilityIdentifier);
-        ZHLogInfo(@"title: %@", item.title);
-        ZHLogInfo(@"name: %@", item.name);
-        ZHLogInfo(@"identifier: %d", item.identifier);
-    }
+    iOSHookInfo *hookInfo = [[iOSHookInfo alloc] init];
     
-    ZABaseContextModel *model = self.zaContextModel;
-    // unknown
-    if (model.zaUIType == 0) {
-//        这种情况下，model 是个空的，打点是空的
-    } else if (model.zaUIType == 1) { // button
-        // 这种情况下是有打点信息的
-        NSString *buttonText = model.detail.view.elementLocation.text;
-        NSInteger buttonUIAction = model.zaUIActionType;
-        NSInteger buttonUIEvent = model.zaUIEventType;
-        NSString *buttonAction = NSStringFromSelector(action);
-        
-    }
-    
-    if ([self isKindOfClass:UIButton.class]) {
+    if ([[self class] isSubclassOfClass:[UIButton class]]) {
         UIButton *temp = (UIButton*)self;
         NSString *xcID = temp.accessibilityIdentifier;
         NSString *xcLabel = temp.accessibilityLabel;
         NSString *actionName = NSStringFromSelector(action);
+        NSString *appCompText = nil;
         
         ZABaseContextModel *model = temp.zaContextModel;
         
@@ -96,12 +84,40 @@
             ZHLogInfo(@"%@", model.detail.view.action);
             ZHLogInfo(@"%d", model.detail.view.elementLocation.type);
             ZHLogInfo(@"%@", model.detail.view.hasElementLocation ? model.detail.view.elementLocation.text : @"没有 element location");
+            appCompText = model.detail.view.elementLocation.text;
         } else {
-            ZHLogInfo(@"没有 view");
+            ZHLogInfo(@"没有获取到埋点信息");
+            // tabbar button
+            if ([selfName containsString:@"TabBarButton"]) {
+                ZHTabBarItemView *itemView = self.superview;
+                ZHTabBarItem *item = itemView.item;
+                appCompText = item.title;
+                ZHLogInfo(@"%@", itemView.accessibilityIdentifier);
+                ZHLogInfo(@"title: %@", item.title);
+                ZHLogInfo(@"name: %@", item.name);
+                ZHLogInfo(@"identifier: %d", item.identifier);
+            } else {
+                if (temp.titleLabel && [temp.titleLabel respondsToSelector:@selector(text)]) {
+                    appCompText = temp.titleLabel.text;
+                }
+            }
         }
-        ZHLogInfo(@"%@", temp.zaContextModel.description);
-        ZHLogInfo(@"id: %@", xcID);
-        ZHLogInfo(@"label: %@", xcLabel);
+        
+        
+        hookInfo.xcID = xcID;
+        hookInfo.xcLabel = xcLabel;
+        
+        hookInfo.appCompName = selfName;
+        hookInfo.appSuperViewCompName = superViewName;
+        hookInfo.appUserOperation = @"click";
+        hookInfo.appOperationName = NSStringFromSelector(action);
+        hookInfo.appCompText = appCompText;
+        hookInfo.hookMethodName = @"sendAction";
+        ZHLogInfo(@"%@", hookInfo.description);
+        
+    } else {
+        ZHLogInfo(@"不属于 UIButton");
+        
     }
     
 }
