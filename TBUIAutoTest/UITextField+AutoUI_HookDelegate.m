@@ -75,6 +75,8 @@ static void auto_exchangeDelegateMethod(Class originalClass, SEL originalSel, Cl
         return [self replace_textFieldShouldReturn:textField];
     }
     
+    ZHLogInfo(@"Hook textFieldShouldReturn");
+    
     NSString *superViewName = NSStringFromClass(textField.superview.class);
     NSString *selfName = @"UITextField";
     
