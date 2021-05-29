@@ -78,6 +78,8 @@
         hookInfo.hookMethodName = @"becomeFirstResponder";
         ZHLogInfo(@"%@", hookInfo.description);
         
+        [[TBUIAutoTest sharedInstance].hookInfoArr addObject:hookInfo.description];
+        
     }
     return [self auto_becomeFirstResponder];
     
@@ -143,6 +145,8 @@
         hookInfo.appCompHint = appCompHint;
         hookInfo.hookMethodName = @"resignFirstResponder";
         ZHLogInfo(@"%@", hookInfo.description);
+        
+        [[TBUIAutoTest sharedInstance].hookInfoArr addObject:hookInfo.description];
     }
     return [self auto_resignFirstResponder];
 }

@@ -9,6 +9,8 @@
 #import "TBUIAutoTest.h"
 #import <objc/runtime.h>
 
+@import ZHLogger;
+
 NSString * const kAutoTestUITurnOnKey = @"kAutoTestUITurnOnKey";
 NSString * const kAutoTestUILongPressKey = @"kAutoTestUILongPressKey";
 
@@ -24,8 +26,46 @@ NSString * const kAutoTestUILongPressKey = @"kAutoTestUILongPressKey";
     return _instance;
 }
 
+- (NSMutableArray *)hookInfoArr {
+    if (!_hookInfoArr) {
+        _hookInfoArr = [NSMutableArray array];
+    }
+    return _hookInfoArr;
+}
+
 + (BOOL)isEnableAutoUI {
     return [[NSUserDefaults standardUserDefaults] boolForKey:ZHDebugEnableAutoUIKey];
+}
+
+- (UIAlertController*)getAlert {
+    //提示框添加文本输入框
+    UIAlertController* alert = [UIAlertController alertControllerWithTitle:@"给你的用例取个名字吧"
+                                                                   message:@""
+                                                            preferredStyle:UIAlertControllerStyleAlert];
+    
+    UIAlertAction* okAction = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault
+                                                          handler:^(UIAlertAction * action) {
+                                                              //响应事件
+                                                              //得到文本信息
+                                                              for(UITextField *text in alert.textFields){
+                                                                  ZHLogInfo(@"用例名：%@", text.text);
+                                                              }
+                                                          }];
+    UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
+                                                         handler:^(UIAlertAction * action) {
+                                                             //响应事件
+                                                             ZHLogInfo(@"用户取消了操作");
+                                                             // todo 是否需要取消发送 hook info 给后端？？？
+                                                         }];
+    [alert addTextFieldWithConfigurationHandler:^(UITextField *textField) {
+        textField.placeholder = @"用例名";
+    }];
+    
+    [alert addAction:okAction];
+    [alert addAction:cancelAction];
+   
+    
+    return alert;
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer

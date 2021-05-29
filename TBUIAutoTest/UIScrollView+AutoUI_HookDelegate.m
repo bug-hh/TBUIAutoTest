@@ -49,8 +49,7 @@ static void auto_exchangeDelegateMethod(Class originalClass, SEL originalSel, Cl
     [UIScrollView swizzleSelector:@selector(setDelegate:) withAnotherSelector:@selector(auto_setDelegate:)];
 }
 
-
-- (void)auto_setDelegate:(id<UITextFieldDelegate>)delegate {
+- (void)auto_setDelegate:(id<UIScrollViewDelegate>)delegate {
     [self auto_setDelegate:delegate];
     [self exchangeUIScrollViewDelegateMethod:delegate];
 }
@@ -132,6 +131,9 @@ static void auto_exchangeDelegateMethod(Class originalClass, SEL originalSel, Cl
         hookInfo.hookMethodName = @"scrollViewDidEndDragging";
         
         ZHLogInfo(@"%@", hookInfo.description);
+        
+        [[TBUIAutoTest sharedInstance].hookInfoArr addObject:hookInfo.description];
+        
     } else {
         ZHLogInfo(@"没有开启 AutoUI 开关，请到 DebugUI 中开启");
     }

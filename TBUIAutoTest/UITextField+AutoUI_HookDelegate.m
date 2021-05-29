@@ -90,6 +90,9 @@ static void auto_exchangeDelegateMethod(Class originalClass, SEL originalSel, Cl
     hookInfo.hookMethodName = @"textFieldShouldReturn";
     
     ZHLogInfo(@"%@", hookInfo.description);
+    
+    [[TBUIAutoTest sharedInstance].hookInfoArr addObject:hookInfo.description];
+    
     return [self replace_textFieldShouldReturn:textField];
     
 }

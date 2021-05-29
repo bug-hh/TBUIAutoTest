@@ -15,8 +15,11 @@ extern NSString * const kAutoTestUILongPressKey; // 是否开启长按弹窗显�
 
 @interface TBUIAutoTest : NSObject <UIGestureRecognizerDelegate>
 
+@property(nonatomic, strong) NSMutableArray *hookInfoArr;
+
 + (instancetype)sharedInstance;
 + (BOOL)isEnableAutoUI;
+- (UIAlertController*)getAlert;
 
 @end
 

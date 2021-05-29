@@ -115,6 +115,8 @@
         hookInfo.hookMethodName = @"sendAction";
         ZHLogInfo(@"%@", hookInfo.description);
         
+        [[TBUIAutoTest sharedInstance].hookInfoArr addObject:hookInfo.description];
+        
     } else {
         ZHLogInfo(@"不属于 UIButton");
         
