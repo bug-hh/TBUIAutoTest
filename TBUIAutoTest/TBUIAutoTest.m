@@ -7,6 +7,7 @@
 //
 
 #import "TBUIAutoTest.h"
+#import "iOSCaseInfo.h"
 #import <objc/runtime.h>
 
 @import ZHLogger;
@@ -47,8 +48,13 @@ NSString * const kAutoTestUILongPressKey = @"kAutoTestUILongPressKey";
                                                           handler:^(UIAlertAction * action) {
                                                               //响应事件
                                                               //得到文本信息
-                                                              for(UITextField *text in alert.textFields){
-                                                                  ZHLogInfo(@"用例名：%@", text.text);
+                                                              for(UITextField *textField in alert.textFields){
+                                                                  iOSCaseInfo *caseInfo = [[iOSCaseInfo alloc] init];
+                                                                  caseInfo.caseName = textField.text;
+                                                                  caseInfo.caseId = self.uuidString;
+                                                                  caseInfo.hookInfoArr = self.hookInfoArr;
+                                                                  ZHLogInfo(@"用例名：%@", textField.text);
+                                                                  ZHLogInfo(@"case info: %@", caseInfo.description);
                                                               }
                                                           }];
     UIAlertAction* cancelAction = [UIAlertAction actionWithTitle:@"Cancel" style:UIAlertActionStyleCancel
@@ -66,6 +72,15 @@ NSString * const kAutoTestUILongPressKey = @"kAutoTestUILongPressKey";
    
     
     return alert;
+}
+
+- (NSString *)uuidString {
+    CFUUIDRef uuid_ref = CFUUIDCreate(NULL);
+    CFStringRef uuid_string_ref= CFUUIDCreateString(NULL, uuid_ref);
+    NSString *uuid = [NSString stringWithString:(__bridge NSString *)uuid_string_ref];
+    CFRelease(uuid_ref);
+    CFRelease(uuid_string_ref);
+    return [uuid lowercaseString];
 }
 
 - (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer

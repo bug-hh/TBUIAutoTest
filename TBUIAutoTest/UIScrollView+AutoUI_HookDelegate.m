@@ -50,8 +50,15 @@ static void auto_exchangeDelegateMethod(Class originalClass, SEL originalSel, Cl
 }
 
 - (void)auto_setDelegate:(id<UIScrollViewDelegate>)delegate {
-    [self auto_setDelegate:delegate];
-    [self exchangeUIScrollViewDelegateMethod:delegate];
+    if ([self respondsToSelector:@selector(exchangeUIScrollViewDelegateMethod:)]) {
+        [self exchangeUIScrollViewDelegateMethod:delegate];
+    }
+    
+    if ([self respondsToSelector:@selector(auto_setDelegate:)]) {
+        [self auto_setDelegate:delegate];
+    }
+    
+    
 }
 
 

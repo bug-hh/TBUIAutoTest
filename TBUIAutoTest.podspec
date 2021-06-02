@@ -21,5 +21,5 @@ s.frameworks = 'Foundation', 'UIKit'
 s.dependency 'ZHLogger'
 s.dependency 'ZHCoreZASDK'
 s.dependency 'ZHTabBar'
-
+s.dependency 'ZHCoreUsefullViews'   # 首页顶部 tab
 end
